@@ -59,6 +59,10 @@ a:hover { text-decoration: underline; }
   position: relative;
   overflow: hidden;
   padding: 120px 0 100px;
+  min-height: 720px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
 }
 .sigil {
@@ -374,4 +378,132 @@ body.loaded .sigil-shape {
 .card-tile .card-price {
   color: var(--gold);
   font-weight: 600;
+}
+
+/* Events page */
+.events-page {
+  padding: 60px 0 80px;
+}
+.section-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  color: var(--gold);
+  margin: 56px 0 20px;
+}
+.events-page > .wrap > .section-heading:first-of-type {
+  margin-top: 40px;
+}
+
+/* Weekly schedule */
+.schedule-grid {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.schedule-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 100px 70px;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.schedule-row:last-child { border-bottom: none; }
+.schedule-day {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+.schedule-name {
+  color: var(--text);
+  font-weight: 500;
+}
+.schedule-time {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+.schedule-fee {
+  color: var(--gold);
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Special events */
+.special-events {
+  display: grid;
+  gap: 16px;
+}
+.event-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 24px;
+}
+.event-card-date {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+.event-card-name {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--text);
+  margin: 8px 0 10px;
+}
+.event-card-copy {
+  color: var(--text-muted);
+}
+
+/* Rental card */
+.rental-card {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 32px;
+}
+.rental-price {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.rental-price span {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+.rental-copy {
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  max-width: 520px;
+}
+.rental-subhead {
+  color: var(--text);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.rental-list {
+  color: var(--text-muted);
+  margin: 0 0 24px 20px;
+}
+.rental-list li { margin-bottom: 6px; }
+
+/* Facebook link in footer */
+.facebook-link {
+  color: var(--teal);
+  font-size: 0.9rem;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .schedule-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .schedule-fee { text-align: left; }
 }
