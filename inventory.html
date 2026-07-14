@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventory | Arcane Games</title>
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a href="index.html" class="logo">Arcane Games</a>
+      <nav class="nav-links">
+        <a href="index.html#details">Visit</a>
+        <a href="index.html#events">Events</a>
+        <a href="index.html#gallery">Gallery</a>
+        <a href="inventory.html">Inventory</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="inventory-page">
+    <div class="wrap">
+      <span class="eyebrow">Search the shelves</span>
+      <h1 class="inventory-title">Inventory</h1>
+      <p class="inventory-sub">Live from what's actually in the shop. Updated daily.</p>
+
+      <div class="inventory-controls">
+        <input type="text" id="searchInput" placeholder="Search by card name..." class="inventory-search">
+        <select id="setFilter" class="inventory-select">
+          <option value="">All sets</option>
+        </select>
+        <select id="conditionFilter" class="inventory-select">
+          <option value="">All conditions</option>
+        </select>
+      </div>
+
+      <p id="statusMessage" class="inventory-status">Loading inventory...</p>
+
+      <div id="cardGrid" class="inventory-grid"></div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <span class="logo">Arcane Games</span>
+      <p>2245 W Columbia Ave Ste 110, Battle Creek, MI 49015 · (269) 300-8537</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="inventory.js"></script>
+</body>
+</html>
