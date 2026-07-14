@@ -9,7 +9,7 @@ const setFilter = document.getElementById('setFilter');
 const conditionFilter = document.getElementById('conditionFilter');
 
 function loadInventory() {
-  Papa.parse(SHEET_CSV_URL, {
+  Papa.parse(SHEET_CSV_URL + "&t=" + new Date().getTime(), {
     download: true,
     header: true,
     skipEmptyLines: true,
@@ -60,7 +60,7 @@ function renderCards(cards) {
     tile.className = 'card-tile';
 
     const foil = (card['Foil'] || '').toLowerCase() === 'foil' ? ' · Foil' : '';
-    const price = card['Purchase price'] ? `$${parseFloat(card['Purchase price']).toFixed(2)}` : '—';
+    const price = card['Purchase Price'] ? `$${parseFloat(card['Purchase Price']).toFixed(2)}` : '—';
 
     const imageUrl = card['Image URL'] && card['Image URL'].startsWith('http') ? card['Image URL'] : null;
 const imageHtml = imageUrl
