@@ -2,6 +2,14 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.classList.add('loaded');
 });
 
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+if (navToggle && navLinks) {
+  navToggle.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+  });
+}
+
 const weeklySchedule = {
   1: { name: "Board Game Night", time: "5:00 PM · Free", copy: "Bring your favorite board game or borrow one of ours. All ages and experience levels welcome." },
   2: { name: "Nexus Night", time: "6:00 PM · $8 entry", copy: "Pull up a chair, bring a deck, and settle in. Nexus Night runs every week for Riftbound and Magic players looking for a real table and real competition." },
