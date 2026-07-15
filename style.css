@@ -277,7 +277,7 @@ body.loaded .sigil-shape {
 
 /* Inventory page */
 .inventory-page {
-  padding: 100px 0 80px;
+  padding: 60px 0 80px;
   min-height: 60vh;
 }
 .inventory-title {
@@ -506,4 +506,36 @@ body.loaded .sigil-shape {
     gap: 4px;
   }
   .schedule-fee { text-align: left; }
+}
+
+.inventory-note {
+  color: var(--gold);
+  font-style: italic;
+  font-size: 0.9rem;
+  margin-top: -8px;
+  margin-bottom: 28px;
+  max-width: 560px;
+}
+.inventory-note a { color: var(--teal); }
+
+.inventory-toggle {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.toggle-btn {
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.toggle-btn.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg);
+  font-weight: 600;
 }

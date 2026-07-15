@@ -23,11 +23,18 @@
   </header>
 
   <section class="inventory-page">
-    <div class="wrap">
-      <span class="eyebrow">Search the shelves</span>
-      <h1 class="inventory-title">Inventory</h1>
-      <p class="inventory-sub">Live from what's actually in the shop. Updated daily.</p>
+  <div class="wrap">
+    <span class="eyebrow">Search the shelves</span>
+    <h1 class="inventory-title">Inventory</h1>
+    <p class="inventory-sub">Live from what's actually in the shop. Updated daily.</p>
+    <p class="inventory-note">This reflects what we've listed so far, we carry more than what's shown here. If you don't see it, <a href="tel:+12693008537">give us a call</a>, we're happy to check.</p>
 
+    <div class="inventory-toggle">
+      <button class="toggle-btn active" id="singlesToggle">MTG Singles</button>
+      <button class="toggle-btn" id="sealedToggle">Sealed &amp; Bundles</button>
+    </div>
+
+    <div id="singlesView">
       <div class="inventory-controls">
         <input type="text" id="searchInput" placeholder="Search by card name..." class="inventory-search">
         <select id="setFilter" class="inventory-select">
@@ -37,12 +44,20 @@
           <option value="">All conditions</option>
         </select>
       </div>
-
       <p id="statusMessage" class="inventory-status">Loading inventory...</p>
-
       <div id="cardGrid" class="inventory-grid"></div>
     </div>
-  </section>
+
+    <div id="sealedView" style="display: none;">
+      <div class="inventory-controls">
+        <input type="text" id="sealedSearchInput" placeholder="Search sealed product..." class="inventory-search">
+      </div>
+      <p id="sealedStatusMessage" class="inventory-status">Loading sealed product...</p>
+      <div id="sealedGrid" class="inventory-grid"></div>
+    </div>
+
+  </div>
+</section>
 
   <footer class="site-footer">
   <div class="wrap footer-inner">
