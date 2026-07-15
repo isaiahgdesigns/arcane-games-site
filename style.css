@@ -596,5 +596,6 @@ body.loaded .sigil-shape {
   }
   .header-inner {
     position: relative;
+    z-index: 100;
   }
 }
