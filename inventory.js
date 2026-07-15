@@ -20,16 +20,35 @@ const sealedToggle = document.getElementById('sealedToggle');
 const singlesView = document.getElementById('singlesView');
 const sealedView = document.getElementById('sealedView');
 
+const lightbox = document.getElementById('imageLightbox');
+const lightboxImage = document.getElementById('lightboxImage');
+
+function openLightbox(src) {
+  lightboxImage.src = src;
+  lightbox.classList.add('active');
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('active');
+  lightboxImage.src = '';
+}
+
+lightbox.addEventListener('click', closeLightbox);
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeLightbox();
+});
+
 
 function loadInventory() {
   Papa.parse(SHEET_CSV_URL + "&t=" + new Date().getTime(), {
     download: true,
     header: true,
     skipEmptyLines: true,
+    transformHeader: (h) => h.trim().toLowerCase(),
     complete: (results) => {
       allCards = results.data.filter(row => {
-        const qty = parseInt(row['Quantity'], 10);
-        return row['Name'] && qty > 0;
+        const qty = parseInt(row['quantity'], 10);
+        return row['name'] && qty > 0;
       });
       populateFilters();
       renderCards(allCards);
@@ -42,8 +61,8 @@ function loadInventory() {
 }
 
 function populateFilters() {
-  const sets = [...new Set(allCards.map(c => c['Set Name']).filter(Boolean))].sort();
-  const conditions = [...new Set(allCards.map(c => c['Condition']).filter(Boolean))].sort();
+  const sets = [...new Set(allCards.map(c => c['set name']).filter(Boolean))].sort();
+  const conditions = [...new Set(allCards.map(c => formatCondition(c['condition'])).filter(Boolean))].sort();
 
   sets.forEach(set => {
     const opt = document.createElement('option');
@@ -60,6 +79,14 @@ function populateFilters() {
   });
 }
 
+function formatCondition(raw) {
+  if (!raw) return 'Unknown';
+  return raw
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
 function renderCards(cards) {
   cardGrid.innerHTML = '';
 
@@ -72,26 +99,32 @@ function renderCards(cards) {
     const tile = document.createElement('div');
     tile.className = 'card-tile';
 
-    const foil = (card['Foil'] || '').toLowerCase() === 'foil' ? ' · Foil' : '';
-    const price = card['Purchase Price'] ? `$${parseFloat(card['Purchase Price']).toFixed(2)}` : '—';
+    const foil = (card['foil'] || '').toLowerCase() === 'foil' ? ' · Foil' : '';
+    const price = card['purchase price'] ? `$${parseFloat(card['purchase price']).toFixed(2)}` : '—';
+    const condition = formatCondition(card['condition']);
 
-    const imageUrl = card['Image URL'] && card['Image URL'].startsWith('http') ? card['Image URL'] : null;
-const imageHtml = imageUrl
-  ? `<img class="card-image" src="${imageUrl}" alt="${card['Name']}" loading="lazy">`
-  : `<div class="card-image card-image-placeholder">No image</div>`;
+    const imageUrl = card['image url'] && card['image url'].startsWith('http') ? card['image url'] : null;
+    const imageHtml = imageUrl
+      ? `<img class="card-image" src="${imageUrl}" alt="${card['name']}" loading="lazy">`
+      : `<div class="card-image card-image-placeholder">No image</div>`;
 
-tile.innerHTML = `
-  ${imageHtml}
-  <div class="card-info">
-    <div class="card-name">${card['Name']}</div>
-    <div class="card-set">${card['Set Name'] || card['Set Code'] || ''}${foil}</div>
-    <div class="card-meta">
-      <span>${card['Condition'] || 'Unknown'} · Qty ${card['Quantity']}</span>
-      <span class="card-price">${price}</span>
-    </div>
-  </div>
-`;
+    tile.innerHTML = `
+      ${imageHtml}
+      <div class="card-info">
+        <div class="card-name">${card['name']}</div>
+        <div class="card-set">${card['set name'] || card['set code'] || ''}${foil}</div>
+        <div class="card-meta">
+          <span>${condition} · Qty ${card['quantity']}</span>
+          <span class="card-price">${price}</span>
+        </div>
+      </div>
+    `;
     cardGrid.appendChild(tile);
+
+    const img = tile.querySelector('.card-image');
+    if (img && imageUrl) {
+      img.addEventListener('click', () => openLightbox(imageUrl));
+    }
   });
 }
 
@@ -101,9 +134,9 @@ function applyFilters() {
   const selectedCondition = conditionFilter.value;
 
   const filtered = allCards.filter(card => {
-    const matchesSearch = card['Name'].toLowerCase().includes(searchTerm);
-    const matchesSet = !selectedSet || card['Set Name'] === selectedSet;
-    const matchesCondition = !selectedCondition || card['Condition'] === selectedCondition;
+    const matchesSearch = card['name'].toLowerCase().includes(searchTerm);
+    const matchesSet = !selectedSet || card['set name'] === selectedSet;
+    const matchesCondition = !selectedCondition || formatCondition(card['condition']) === selectedCondition;
     return matchesSearch && matchesSet && matchesCondition;
   });
 
@@ -144,7 +177,7 @@ function renderSealed(items) {
     const imageUrl = item['Image URL'] && item['Image URL'].startsWith('http') ? item['Image URL'] : null;
     const imageHtml = imageUrl
       ? `<img class="card-image" src="${imageUrl}" alt="${item['Item Name']}" loading="lazy">`
-      : `<div class="card-image card-image-placeholder">No image yet</div>`;
+      : `<div class="card-image card-image-placeholder">See this product in store</div>`;
     const price = item['Price'] ? `$${parseFloat(item['Price']).toFixed(2)}` : '—';
 
     tile.innerHTML = `
@@ -159,6 +192,11 @@ function renderSealed(items) {
       </div>
     `;
     sealedGrid.appendChild(tile);
+
+    const img = tile.querySelector('.card-image');
+    if (img && imageUrl) {
+      img.addEventListener('click', () => openLightbox(imageUrl));
+    }
   });
 }
 
