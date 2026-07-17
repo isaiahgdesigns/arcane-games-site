@@ -345,12 +345,16 @@ body.loaded .sigil-shape {
   background: var(--surface-alt);
 }
 .card-image-placeholder {
+  aspect-ratio: auto;
+  height: 100px;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: 0.85rem;
+  background: var(--surface-alt);
 }
 .card-info {
   padding: 16px;
