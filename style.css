@@ -639,3 +639,31 @@ body.loaded .sigil-shape {
   border-color: #5865F2;
   background: rgba(88, 101, 242, 0.08);
 }
+
+.preview-banner {
+  background: rgba(201, 162, 75, 0.15);
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  padding: 16px 20px;
+  color: var(--text);
+  font-size: 0.95rem;
+  margin-bottom: 32px;
+}
+.preview-banner strong {
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 0.85rem;
+}
+
+.construction-banner {
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  padding: 10px 20px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.construction-banner a {
+  color: var(--teal);
+}
