@@ -1,3 +1,6 @@
+/* ==========================================================================
+   1. Variables & Reset
+   ========================================================================== */
 :root {
   --bg: #16121f;
   --surface: #211b2e;
@@ -22,6 +25,11 @@ body {
   line-height: 1.6;
 }
 
+/* Pushes content down when the cart hold banner is showing, so it doesn't overlap the header */
+body.cart-banner-active {
+  padding-top: 44px;
+}
+
 a { color: var(--gold); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
@@ -31,7 +39,42 @@ a:hover { text-decoration: underline; }
   padding: 0 24px;
 }
 
-/* Header */
+
+/* ==========================================================================
+   2. Site-wide Banners (construction notice, inventory preview mode)
+   ========================================================================== */
+.construction-banner {
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  padding: 10px 20px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.construction-banner a {
+  color: var(--teal);
+}
+
+.preview-banner {
+  background: rgba(201, 162, 75, 0.15);
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  padding: 16px 20px;
+  color: var(--text);
+  font-size: 0.95rem;
+  margin-bottom: 32px;
+}
+.preview-banner strong {
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 0.85rem;
+}
+
+
+/* ==========================================================================
+   3. Header & Navigation
+   ========================================================================== */
 .site-header {
   padding: 20px 0;
   border-bottom: 1px solid var(--border);
@@ -54,7 +97,41 @@ a:hover { text-decoration: underline; }
 }
 .nav-links a:hover { color: var(--gold); }
 
-/* Hero */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--gold);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+
+/* ==========================================================================
+   4. Buttons (shared across pages)
+   ========================================================================== */
+.btn {
+  display: inline-block;
+  padding: 14px 28px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+.btn-gold {
+  background: var(--gold);
+  color: var(--bg);
+}
+.btn-gold:hover { background: #d9b562; text-decoration: none; }
+.btn-ghost {
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); text-decoration: none; }
+
+
+/* ==========================================================================
+   5. Homepage — Hero
+   ========================================================================== */
 .hero {
   position: relative;
   overflow: hidden;
@@ -154,25 +231,11 @@ body.loaded .sigil-shape {
   justify-content: center;
   flex-wrap: wrap;
 }
-.btn {
-  display: inline-block;
-  padding: 14px 28px;
-  border-radius: 4px;
-  font-weight: 500;
-  font-size: 0.95rem;
-}
-.btn-gold {
-  background: var(--gold);
-  color: var(--bg);
-}
-.btn-gold:hover { background: #d9b562; text-decoration: none; }
-.btn-ghost {
-  border: 1px solid var(--border);
-  color: var(--text);
-}
-.btn-ghost:hover { border-color: var(--gold); color: var(--gold); text-decoration: none; }
 
-/* Details */
+
+/* ==========================================================================
+   6. Homepage — Details Grid (Location / Hours / Contact / Reputation)
+   ========================================================================== */
 .details { padding: 80px 0; }
 .details-grid {
   display: grid;
@@ -194,13 +257,16 @@ body.loaded .sigil-shape {
   color: var(--teal);
   margin-bottom: 12px;
 }
-.detail-card p { 
-    color: var(--text-muted);
-    overflow-wrap: break-word;
+.detail-card p {
+  color: var(--text-muted);
+  overflow-wrap: break-word;
 }
 .detail-card a { color: var(--text); }
 
-/* Event spotlight */
+
+/* ==========================================================================
+   7. Homepage — Tonight's Event Spotlight
+   ========================================================================== */
 .event-spotlight {
   background: var(--surface-alt);
   padding: 90px 0;
@@ -226,7 +292,10 @@ body.loaded .sigil-shape {
   color: var(--text-muted);
 }
 
-/* Gallery */
+
+/* ==========================================================================
+   8. Homepage — Gallery
+   ========================================================================== */
 .gallery { padding: 90px 0; }
 .gallery h2 {
   font-family: var(--font-display);
@@ -253,7 +322,10 @@ body.loaded .sigil-shape {
   background-position: center;
 }
 
-/* Footer */
+
+/* ==========================================================================
+   9. Footer & Social Links
+   ========================================================================== */
 .site-footer {
   border-top: 1px solid var(--border);
   padding: 40px 0;
@@ -269,13 +341,167 @@ body.loaded .sigil-shape {
   color: var(--text-muted);
   font-size: 0.9rem;
 }
-
-@media (max-width: 640px) {
-  .nav-links { display: none; }
-  .footer-inner { flex-direction: column; text-align: center; }
+.facebook-link {
+  color: var(--teal);
+  font-size: 0.9rem;
 }
 
-/* Inventory page */
+.social-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.social-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  transition: border-color 0.2s, color 0.2s;
+}
+.social-btn:hover {
+  text-decoration: none;
+}
+.social-btn-facebook {
+  color: #1877F2;
+  border-color: rgba(24, 119, 242, 0.4);
+}
+.social-btn-facebook:hover {
+  border-color: #1877F2;
+  background: rgba(24, 119, 242, 0.08);
+}
+.social-btn-discord {
+  color: #5865F2;
+  border-color: rgba(88, 101, 242, 0.4);
+}
+.social-btn-discord:hover {
+  border-color: #5865F2;
+  background: rgba(88, 101, 242, 0.08);
+}
+
+
+/* ==========================================================================
+   10. Events Page
+   ========================================================================== */
+.events-page {
+  padding: 60px 0 80px;
+}
+.section-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  color: var(--gold);
+  margin: 56px 0 20px;
+}
+.events-page > .wrap > .section-heading:first-of-type {
+  margin-top: 40px;
+}
+
+/* Weekly schedule table */
+.schedule-grid {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.schedule-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 100px 70px;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.schedule-row:last-child { border-bottom: none; }
+.schedule-day {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+.schedule-name {
+  color: var(--text);
+  font-weight: 500;
+}
+.schedule-time {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+.schedule-fee {
+  color: var(--gold);
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Special (upcoming) events */
+.special-events {
+  display: grid;
+  gap: 16px;
+}
+.event-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 24px;
+}
+.event-card-date {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+.event-card-name {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--text);
+  margin: 8px 0 10px;
+}
+.event-card-copy {
+  color: var(--text-muted);
+}
+
+/* Game room rental card */
+.rental-card {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 32px;
+}
+.rental-price {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.rental-price span {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+.rental-copy {
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  max-width: 520px;
+}
+.rental-subhead {
+  color: var(--text);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.rental-list {
+  color: var(--text-muted);
+  margin: 0 0 24px 20px;
+}
+.rental-list li { margin-bottom: 6px; }
+
+
+/* ==========================================================================
+   11. Inventory Page — Search Controls & Toggle
+   ========================================================================== */
 .inventory-page {
   padding: 60px 0 80px;
   min-height: 60vh;
@@ -289,6 +515,37 @@ body.loaded .sigil-shape {
 .inventory-sub {
   color: var(--text-muted);
   margin-bottom: 32px;
+}
+.inventory-note {
+  color: var(--gold);
+  font-style: italic;
+  font-size: 0.9rem;
+  margin-top: -8px;
+  margin-bottom: 28px;
+  max-width: 560px;
+}
+.inventory-note a { color: var(--teal); }
+
+.inventory-toggle {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.toggle-btn {
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.toggle-btn.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg);
+  font-weight: 600;
 }
 
 .inventory-controls {
@@ -326,6 +583,10 @@ body.loaded .sigil-shape {
   margin-bottom: 20px;
 }
 
+
+/* ==========================================================================
+   12. Inventory Page — Card Grid & Tiles
+   ========================================================================== */
 .inventory-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -343,6 +604,7 @@ body.loaded .sigil-shape {
   object-fit: cover;
   display: block;
   background: var(--surface-alt);
+  cursor: zoom-in;
 }
 .card-image-placeholder {
   aspect-ratio: auto;
@@ -384,166 +646,330 @@ body.loaded .sigil-shape {
   font-weight: 600;
 }
 
-/* Events page */
-.events-page {
-  padding: 60px 0 80px;
-}
-.section-heading {
-  font-family: var(--font-display);
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  color: var(--gold);
-  margin: 56px 0 20px;
-}
-.events-page > .wrap > .section-heading:first-of-type {
-  margin-top: 40px;
-}
 
-/* Weekly schedule */
-.schedule-grid {
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  overflow: hidden;
-}
-.schedule-row {
-  display: grid;
-  grid-template-columns: 110px 1fr 100px 70px;
-  align-items: center;
-  padding: 16px 20px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-}
-.schedule-row:last-child { border-bottom: none; }
-.schedule-day {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--teal);
-}
-.schedule-name {
-  color: var(--text);
-  font-weight: 500;
-}
-.schedule-time {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-}
-.schedule-fee {
-  color: var(--gold);
-  font-weight: 600;
-  text-align: right;
-}
-
-/* Special events */
-.special-events {
-  display: grid;
-  gap: 16px;
-}
-.event-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 24px;
-}
-.event-card-date {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--teal);
-}
-.event-card-name {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  color: var(--text);
-  margin: 8px 0 10px;
-}
-.event-card-copy {
-  color: var(--text-muted);
-}
-
-/* Rental card */
-.rental-card {
-  background: var(--surface-alt);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 32px;
-}
-.rental-price {
-  font-family: var(--font-display);
-  font-size: 2.2rem;
-  color: var(--gold);
-  margin-bottom: 12px;
-}
-.rental-price span {
-  font-family: var(--font-body);
-  font-size: 1rem;
-  color: var(--text-muted);
-  font-weight: 400;
-}
-.rental-copy {
-  color: var(--text-muted);
-  margin-bottom: 20px;
-  max-width: 520px;
-}
-.rental-subhead {
-  color: var(--text);
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-.rental-list {
-  color: var(--text-muted);
-  margin: 0 0 24px 20px;
-}
-.rental-list li { margin-bottom: 6px; }
-
-/* Facebook link in footer */
-.facebook-link {
-  color: var(--teal);
-  font-size: 0.9rem;
-}
-
-/* Mobile */
-@media (max-width: 640px) {
-  .schedule-row {
-    grid-template-columns: 1fr;
-    gap: 4px;
-  }
-  .schedule-fee { text-align: left; }
-}
-
-.inventory-note {
-  color: var(--gold);
-  font-style: italic;
-  font-size: 0.9rem;
-  margin-top: -8px;
-  margin-bottom: 28px;
-  max-width: 560px;
-}
-.inventory-note a { color: var(--teal); }
-
-.inventory-toggle {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 28px;
-}
-.toggle-btn {
-  padding: 10px 20px;
-  background: transparent;
-  border: 1px solid var(--border);
+/* ==========================================================================
+   13. Cart / Hold System (Add to Cart button, sticky countdown banner)
+   ========================================================================== */
+.add-to-cart-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px 12px;
   border-radius: 4px;
-  color: var(--text-muted);
+  border: 1px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
 }
-.toggle-btn.active {
+.add-to-cart-btn:hover {
   background: var(--gold);
-  border-color: var(--gold);
   color: var(--bg);
-  font-weight: 600;
+}
+.add-to-cart-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.add-to-cart-btn.in-cart {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: var(--bg);
 }
 
+.cart-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--gold);
+  color: var(--bg);
+  text-align: center;
+  padding: 12px 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  z-index: 2000;
+}
+
+.floating-cart-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1900;
+  background: var(--gold);
+  color: var(--bg);
+  border: none;
+  border-radius: 999px;
+  padding: 14px 24px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.floating-cart-btn:hover {
+  background: #d9b562;
+}
+
+/* Quantity stepper (card tiles and cart panel) */
+.qty-stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.qty-btn {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  border: 1px solid var(--teal);
+  background: transparent;
+  color: var(--teal);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+.qty-btn:hover:not(:disabled) {
+  background: var(--teal);
+  color: var(--bg);
+}
+.qty-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.qty-count {
+  flex: 1;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.qty-input {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  padding: 6px 4px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+.qty-input:focus {
+  outline: none;
+  border-color: var(--teal);
+}
+/* Hide the browser's own up/down arrows */
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.qty-input {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.cart-item-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+.cart-item-subtotal {
+  color: var(--gold);
+  font-size: 0.85rem;
+  font-family: var(--font-mono);
+}
+.cart-total {
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.cart-total span {
+  color: var(--gold);
+}
+.cart-total-count {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+.cart-item-qty {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cart-item-qty .qty-btn {
+  width: 26px;
+  height: 26px;
+  font-size: 0.85rem;
+}
+
+/* Expiry warning */
+.expiry-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 2500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.expiry-modal-inner {
+  background: var(--surface);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  padding: 32px;
+  max-width: 420px;
+  text-align: center;
+}
+.expiry-modal-inner h3 {
+  font-family: var(--font-display);
+  color: var(--gold);
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+}
+.expiry-modal-inner p {
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+.expiry-countdown {
+  font-family: var(--font-mono);
+  color: var(--teal);
+  font-size: 1.1rem;
+}
+.expiry-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.view-cart-btn {
+  background: var(--bg);
+  color: var(--gold);
+  border: none;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 12px;
+}
+
+.cart-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(400px, 100%);
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  z-index: 2100;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.4);
+}
+.cart-panel-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
+}
+.cart-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.cart-panel-header h3 {
+  font-family: var(--font-display);
+  color: var(--gold);
+  font-size: 1.3rem;
+}
+.cart-panel-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+}
+.cart-items {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--surface-alt);
+  border-radius: 6px;
+  padding: 12px 14px;
+}
+.cart-item-remove {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.cart-item-name {
+  color: var(--text);
+  font-size: 0.9rem;
+}
+.cart-item-timer {
+  color: var(--teal);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  display: block;
+  margin-top: 4px;
+}
+.cart-item-remove {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.cart-item-remove:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.cart-panel-footer {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  margin-top: 16px;
+}
+.cart-total {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+.cart-checkout-btn {
+  width: 100%;
+  text-align: center;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   14. Lightbox (click-to-enlarge card images)
+   ========================================================================== */
 .lightbox {
   display: none;
   position: fixed;
@@ -566,20 +992,20 @@ body.loaded .sigil-shape {
   border-radius: 10px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 }
-.card-image {
-  cursor: zoom-in;
-}
 
-.nav-toggle {
-  display: none;
-  background: none;
-  border: none;
-  color: var(--gold);
-  font-size: 1.5rem;
-  cursor: pointer;
-}
 
+/* ==========================================================================
+   15. Mobile (max-width: 640px)
+   ========================================================================== */
 @media (max-width: 640px) {
+  .footer-inner { flex-direction: column; text-align: center; }
+
+  .schedule-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .schedule-fee { text-align: left; }
+
   .nav-toggle {
     display: block;
   }
@@ -602,68 +1028,4 @@ body.loaded .sigil-shape {
     position: relative;
     z-index: 100;
   }
-}
-
-.social-links {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.social-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 18px;
-  border-radius: 999px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  border: 1px solid var(--border);
-  transition: border-color 0.2s, color 0.2s;
-}
-.social-btn:hover {
-  text-decoration: none;
-}
-.social-btn-facebook {
-  color: #1877F2;
-  border-color: rgba(24, 119, 242, 0.4);
-}
-.social-btn-facebook:hover {
-  border-color: #1877F2;
-  background: rgba(24, 119, 242, 0.08);
-}
-.social-btn-discord {
-  color: #5865F2;
-  border-color: rgba(88, 101, 242, 0.4);
-}
-.social-btn-discord:hover {
-  border-color: #5865F2;
-  background: rgba(88, 101, 242, 0.08);
-}
-
-.preview-banner {
-  background: rgba(201, 162, 75, 0.15);
-  border: 1px solid var(--gold);
-  border-radius: 6px;
-  padding: 16px 20px;
-  color: var(--text);
-  font-size: 0.95rem;
-  margin-bottom: 32px;
-}
-.preview-banner strong {
-  color: var(--gold);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  font-size: 0.85rem;
-}
-
-.construction-banner {
-  background: var(--surface-alt);
-  border-bottom: 1px solid var(--border);
-  text-align: center;
-  padding: 10px 20px;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-.construction-banner a {
-  color: var(--teal);
 }

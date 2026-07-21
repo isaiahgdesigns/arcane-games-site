@@ -28,6 +28,41 @@
     </div>
   </header>
 
+  <div id="cartBanner" class="cart-banner" style="display: none;">
+  <span id="cartBannerText"></span>
+  <button id="viewCartBtn" class="view-cart-btn">View Cart</button>
+</div>
+
+<div id="expiryModal" class="expiry-modal" style="display: none;">
+  <div class="expiry-modal-inner">
+    <h3>Still there?</h3>
+    <p>The cards in your cart are about to be released so others can buy them.</p>
+    <p class="expiry-countdown"><span id="expiryCountdown">1:00</span> remaining</p>
+    <div class="expiry-modal-actions">
+      <button id="extendHoldBtn" class="btn btn-gold">Keep my cart</button>
+      <button id="dismissExpiryBtn" class="btn btn-ghost">Release it</button>
+    </div>
+  </div>
+</div>
+
+<button id="floatingCartBtn" class="floating-cart-btn">
+  Cart <span id="floatingCartCount">0</span>
+</button>
+
+<div id="cartPanel" class="cart-panel" style="display: none;">
+  <div class="cart-panel-inner">
+    <div class="cart-panel-header">
+      <h3>Your Cart</h3>
+      <button id="closeCartBtn" class="cart-panel-close">&times;</button>
+    </div>
+    <div id="cartItems" class="cart-items"></div>
+    <div class="cart-panel-footer">
+      <p id="cartTotal" class="cart-total"></p>
+      <button id="checkoutBtn" class="btn btn-gold cart-checkout-btn" disabled>Checkout (coming soon)</button>
+    </div>
+  </div>
+</div>
+
   <div class="construction-banner">
     This site is still under construction. For the most current info, please call <a href="tel:+12693008537">(269) 300-8537</a> or stop by the shop.
   </div>
