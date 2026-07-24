@@ -1,15 +1,69 @@
+/* ==========================================================================
+   1. Configuration
+   ========================================================================== */
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby0HAm8HibjE4R-bHIfO4qnr94t_XfIW6uRSYZrkGW2S8aeK3sETE64Uw4mEQzRMdz0/exec";
+const HOLD_MINUTES = 10;
+const WARNING_SECONDS = 60;
+const SYNC_DELAY_MS = 600;
+
+
+/* ==========================================================================
+   2. State
+   ========================================================================== */
+let warningDismissed = false;
+const pendingSync = {};
+
+
+/* ==========================================================================
+   3. DOM references
+   ========================================================================== */
+
+/* Nav */
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+
+/* Tonight's event (homepage only) */
+const tonightNameEl = document.getElementById('tonightName');
+const tonightTimeEl = document.getElementById('tonightTime');
+const tonightCopyEl = document.getElementById('tonightCopy');
+const tonightLabelEl = document.getElementById('tonightLabel');
+
+/* Cart */
+const cartBanner = document.getElementById('cartBanner');
+const cartBannerText = document.getElementById('cartBannerText');
+const viewCartBtn = document.getElementById('viewCartBtn');
+const cartPanel = document.getElementById('cartPanel');
+const closeCartBtn = document.getElementById('closeCartBtn');
+const cartItemsEl = document.getElementById('cartItems');
+const cartTotalEl = document.getElementById('cartTotal');
+const checkoutBtn = document.getElementById('checkoutBtn');
+const floatingCartBtn = document.getElementById('floatingCartBtn');
+const floatingCartCount = document.getElementById('floatingCartCount');
+
+/* Expiry warning */
+const expiryModal = document.getElementById('expiryModal');
+const expiryCountdown = document.getElementById('expiryCountdown');
+const extendHoldBtn = document.getElementById('extendHoldBtn');
+const dismissExpiryBtn = document.getElementById('dismissExpiryBtn');
+
+
+/* ==========================================================================
+   4. Nav toggle (mobile hamburger menu)
+   ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
   document.body.classList.add('loaded');
 });
 
-const navToggle = document.getElementById('navToggle');
-const navLinks = document.getElementById('navLinks');
 if (navToggle && navLinks) {
   navToggle.addEventListener('click', () => {
     navLinks.classList.toggle('open');
   });
 }
 
+
+/* ==========================================================================
+   5. Tonight's event (homepage only)
+   ========================================================================== */
 const weeklySchedule = {
   1: { name: "Board Game Night", time: "5:00 PM · Free", copy: "Bring your favorite board game or borrow one of ours. All ages and experience levels welcome." },
   2: { name: "Nexus Night", time: "6:00 PM · $8 entry", copy: "Pull up a chair, bring a deck, and settle in. Nexus Night runs every week for Riftbound and Magic players looking for a real table and real competition." },
@@ -18,57 +72,32 @@ const weeklySchedule = {
 };
 
 function loadTonightEvent() {
-  const nameEl = document.getElementById('tonightName');
-  const timeEl = document.getElementById('tonightTime');
-  const copyEl = document.getElementById('tonightCopy');
-  const labelEl = document.getElementById('tonightLabel');
-
-  if (!nameEl) return;
+  if (!tonightNameEl) return;
 
   const today = new Date().getDay();
   const event = weeklySchedule[today];
 
   if (event) {
-    labelEl.textContent = "Tonight";
-    nameEl.textContent = event.name;
-    timeEl.textContent = event.time;
-    copyEl.textContent = event.copy;
+    tonightLabelEl.textContent = "Tonight";
+    tonightNameEl.textContent = event.name;
+    tonightTimeEl.textContent = event.time;
+    tonightCopyEl.textContent = event.copy;
   } else {
-    labelEl.textContent = "This Week";
-    nameEl.textContent = "Nothing scheduled tonight";
-    timeEl.textContent = "";
-    copyEl.textContent = "But there's always something on the calendar. Check out our full weekly lineup and upcoming special events.";
+    tonightLabelEl.textContent = "This Week";
+    tonightNameEl.textContent = "Nothing scheduled tonight";
+    tonightTimeEl.textContent = "";
+    tonightCopyEl.textContent = "But there's always something on the calendar. Check out our full weekly lineup and upcoming special events.";
   }
 }
 
 loadTonightEvent();
 
+
 /* ==========================================================================
-   Cart display — shared across every page.
-   Reading and showing the cart lives here. Adding/removing cards only
-   happens on the Inventory page, so that logic stays in inventory.js.
+   6. Session & cart storage
+   Holds live on the server (Google Sheet). This is just the browser's local
+   record of what this visitor is holding, so the UI can stay in sync.
    ========================================================================== */
-
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby0HAm8HibjE4R-bHIfO4qnr94t_XfIW6uRSYZrkGW2S8aeK3sETE64Uw4mEQzRMdz0/exec";
-const HOLD_MINUTES = 10;
-const WARNING_SECONDS = 60;
-
-const cartBanner = document.getElementById('cartBanner');
-const cartBannerText = document.getElementById('cartBannerText');
-const viewCartBtn = document.getElementById('viewCartBtn');
-const cartPanel = document.getElementById('cartPanel');
-const closeCartBtn = document.getElementById('closeCartBtn');
-const cartItemsEl = document.getElementById('cartItems');
-const cartTotalEl = document.getElementById('cartTotal');
-const floatingCartBtn = document.getElementById('floatingCartBtn');
-const floatingCartCount = document.getElementById('floatingCartCount');
-const expiryModal = document.getElementById('expiryModal');
-const expiryCountdown = document.getElementById('expiryCountdown');
-const extendHoldBtn = document.getElementById('extendHoldBtn');
-const dismissExpiryBtn = document.getElementById('dismissExpiryBtn');
-
-let warningDismissed = false;
-
 function getSessionId() {
   let id = sessionStorage.getItem('arcaneSessionId');
   if (!id) {
@@ -88,6 +117,19 @@ function saveCart(cart) {
   sessionStorage.setItem('arcaneCart', JSON.stringify(cart));
 }
 
+function getCartTotal() {
+  return getCart().reduce((sum, item) => sum + (item.price || 0) * item.quantity, 0);
+}
+
+function getCartQuantity(cardId) {
+  const item = getCart().find(i => i.cardId === cardId);
+  return item ? item.quantity : 0;
+}
+
+
+/* ==========================================================================
+   7. Backend calls (Apps Script Web App)
+   ========================================================================== */
 async function callBackend(action, payload = {}) {
   const response = await fetch(WEB_APP_URL, {
     method: 'POST',
@@ -102,9 +144,110 @@ function formatCountdown(seconds) {
   return `${minutes}:${secs.toString().padStart(2, '0')}`;
 }
 
-function getCartTotal() {
-  return getCart().reduce((sum, item) => sum + (item.price || 0) * item.quantity, 0);
+
+/* ==========================================================================
+   8. Cart quantity actions
+   Used by both the panel here and by inventory.js's tile controls.
+   ========================================================================== */
+
+/* Called by every quantity control. Updates the browser's cart immediately
+   so the UI feels instant, then tells the server once the person stops. */
+function queueQuantityChange(cardId, cardName, price, newQty, tileEl, skipTileRender) {
+  const stock = tileEl ? parseInt(tileEl.dataset.stock, 10) || 0 : Infinity;
+  newQty = Math.max(0, Math.min(newQty, stock));
+
+  applyCartQuantity(cardId, cardName, price, newQty, provisionalExpiry());
+  updateCartUI();
+
+  if (tileEl && !skipTileRender && typeof renderTileCartControl === 'function') {
+    renderTileCartControl(tileEl, cardId, cardName, price);
+  }
+  if (cartPanel.style.display === 'block') renderCartPanel();
+
+  clearTimeout(pendingSync[cardId]);
+  pendingSync[cardId] = setTimeout(
+    () => syncQuantity(cardId, cardName, price, tileEl),
+    SYNC_DELAY_MS
+  );
 }
+
+/* Optimistic expiry so the item isn't filtered out as expired before the
+   server has had a chance to confirm the real one. */
+function provisionalExpiry() {
+  return new Date(Date.now() + HOLD_MINUTES * 60 * 1000).toISOString();
+}
+
+/* Sends the settled quantity. If the server can't honour it, we fall back to
+   whatever it says is actually available. */
+async function syncQuantity(cardId, cardName, price, tileEl) {
+  const desired = getCartQuantity(cardId);
+  const result = await callBackend('setQuantity', { cardId, quantity: desired });
+
+  if (result.success) {
+    applyCartQuantity(cardId, cardName, price, result.quantity, result.expiresAt);
+  } else {
+    const fallback = typeof result.maxAvailable === 'number' ? Math.min(desired, result.maxAvailable) : 0;
+    applyCartQuantity(cardId, cardName, price, fallback, result.expiresAt);
+    alert(result.error || "That many aren't available right now.");
+  }
+
+  if (tileEl && typeof renderTileCartControl === 'function') {
+    renderTileCartControl(tileEl, cardId, cardName, price);
+  }
+  if (cartPanel.style.display === 'block') renderCartPanel();
+  updateCartUI();
+}
+
+/* Writes a quantity into the browser's cart copy. A server response also
+   carries a fresh expiry, which applies to every item at once. */
+function applyCartQuantity(cardId, cardName, price, quantity, expiresAt) {
+  let cart = getCart().filter(item => item.cardId !== cardId);
+  if (expiresAt) {
+    cart = cart.map(item => Object.assign({}, item, { expiresAt }));
+  }
+  if (quantity > 0) {
+    cart.push({ cardId, cardName, price: price || 0, quantity, expiresAt });
+  }
+  saveCart(cart);
+}
+
+async function releaseEntireCart() {
+  const cart = getCart();
+  await Promise.all(
+    cart.map(item => callBackend('setQuantity', { cardId: item.cardId, quantity: 0 }))
+  );
+  saveCart([]);
+  hideExpiryWarning();
+  if (typeof refreshAllTileControls === 'function') refreshAllTileControls();
+  updateCartUI();
+}
+
+
+/* ==========================================================================
+   9. Checkout
+   ========================================================================== */
+async function startCheckout() {
+  const cart = getCart();
+  if (cart.length === 0) return;
+
+  checkoutBtn.disabled = true;
+  checkoutBtn.textContent = 'Redirecting to checkout...';
+
+  const result = await callBackend('createCheckoutSession', { cart });
+
+  if (result.success && result.url) {
+    window.location.href = result.url;
+  } else {
+    alert(result.error || "Couldn't start checkout. Please try again.");
+    checkoutBtn.disabled = false;
+    checkoutBtn.textContent = 'Checkout';
+  }
+}
+
+
+/* ==========================================================================
+   10. Cart banner, expiry warning & panel
+   ========================================================================== */
 
 /* Runs once a second on every page. Drops expired items and keeps the
    banner, floating count, and panel (if open) in sync. */
@@ -166,78 +309,6 @@ async function extendHolds() {
   updateCartUI();
 }
 
-/* Used by the panel's quantity controls. Lives here because the panel
-   itself is shared, even though only Inventory calls this with a real tile. */
-function queueQuantityChange(cardId, cardName, price, newQty, tileEl, skipTileRender) {
-  const stock = tileEl ? parseInt(tileEl.dataset.stock, 10) || 0 : Infinity;
-  newQty = Math.max(0, Math.min(newQty, stock));
-
-  applyCartQuantity(cardId, cardName, price, newQty, provisionalExpiry());
-  updateCartUI();
-
-  if (tileEl && !skipTileRender && typeof renderTileCartControl === 'function') {
-    renderTileCartControl(tileEl, cardId, cardName, price);
-  }
-  if (cartPanel.style.display === 'block') renderCartPanel();
-
-  clearTimeout(queueQuantityChange._pending?.[cardId]);
-  queueQuantityChange._pending = queueQuantityChange._pending || {};
-  queueQuantityChange._pending[cardId] = setTimeout(
-    () => syncQuantity(cardId, cardName, price, tileEl),
-    600
-  );
-}
-
-function provisionalExpiry() {
-  return new Date(Date.now() + HOLD_MINUTES * 60 * 1000).toISOString();
-}
-
-async function syncQuantity(cardId, cardName, price, tileEl) {
-  const desired = getCartQuantity(cardId);
-  const result = await callBackend('setQuantity', { cardId, quantity: desired });
-
-  if (result.success) {
-    applyCartQuantity(cardId, cardName, price, result.quantity, result.expiresAt);
-  } else {
-    const fallback = typeof result.maxAvailable === 'number' ? Math.min(desired, result.maxAvailable) : 0;
-    applyCartQuantity(cardId, cardName, price, fallback, result.expiresAt);
-    alert(result.error || "That many aren't available right now.");
-  }
-
-  if (tileEl && typeof renderTileCartControl === 'function') {
-    renderTileCartControl(tileEl, cardId, cardName, price);
-  }
-  if (cartPanel.style.display === 'block') renderCartPanel();
-  updateCartUI();
-}
-
-function applyCartQuantity(cardId, cardName, price, quantity, expiresAt) {
-  let cart = getCart().filter(item => item.cardId !== cardId);
-  if (expiresAt) {
-    cart = cart.map(item => Object.assign({}, item, { expiresAt }));
-  }
-  if (quantity > 0) {
-    cart.push({ cardId, cardName, price: price || 0, quantity, expiresAt });
-  }
-  saveCart(cart);
-}
-
-function getCartQuantity(cardId) {
-  const item = getCart().find(i => i.cardId === cardId);
-  return item ? item.quantity : 0;
-}
-
-async function releaseEntireCart() {
-  const cart = getCart();
-  await Promise.all(
-    cart.map(item => callBackend('setQuantity', { cardId: item.cardId, quantity: 0 }))
-  );
-  saveCart([]);
-  hideExpiryWarning();
-  if (typeof refreshAllTileControls === 'function') refreshAllTileControls();
-  updateCartUI();
-}
-
 function openCartPanel() {
   renderCartPanel();
   cartPanel.style.display = 'block';
@@ -260,6 +331,8 @@ function renderCartPanel() {
   if (validCart.length === 0) {
     cartItemsEl.innerHTML = '<p class="inventory-status">Your cart is empty.</p>';
     cartTotalEl.textContent = '';
+    checkoutBtn.disabled = true;
+    checkoutBtn.textContent = 'Checkout';
     return;
   }
 
@@ -287,6 +360,9 @@ function renderCartPanel() {
   cartTotalEl.innerHTML =
     `Total: <span>$${getCartTotal().toFixed(2)}</span>` +
     `<span class="cart-total-count">${totalItems} card${totalItems > 1 ? 's' : ''} held</span>`;
+
+  checkoutBtn.disabled = false;
+  checkoutBtn.textContent = 'Checkout';
 
   cartItemsEl.querySelectorAll('.qty-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -324,12 +400,20 @@ function renderCartPanel() {
   });
 }
 
+
+/* ==========================================================================
+   11. Event listeners
+   ========================================================================== */
 viewCartBtn.addEventListener('click', openCartPanel);
 floatingCartBtn.addEventListener('click', openCartPanel);
 closeCartBtn.addEventListener('click', closeCartPanel);
+checkoutBtn.addEventListener('click', startCheckout);
 extendHoldBtn.addEventListener('click', extendHolds);
 dismissExpiryBtn.addEventListener('click', releaseEntireCart);
 
+/* Release holds when the visitor leaves, so cards don't sit locked for the
+   full 10 minutes. sendBeacon survives page unload; a normal fetch wouldn't.
+   Not guaranteed on a crash, the server-side expiry is still the real backstop. */
 window.addEventListener('pagehide', () => {
   const cart = getCart();
   if (cart.length === 0) return;
@@ -341,5 +425,9 @@ window.addEventListener('pagehide', () => {
   });
 });
 
+
+/* ==========================================================================
+   12. Init
+   ========================================================================== */
 setInterval(updateCartUI, 1000);
 updateCartUI();
